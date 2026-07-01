@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/neko233/uniops/internal/auth"
 	"github.com/neko233/uniops/internal/server"
@@ -13,7 +14,11 @@ import (
 
 func main() {
 	// Initialize database
-	db, err := store.New("uniops.db")
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "uniops.db"
+	}
+	db, err := store.New(dbPath)
 	if err != nil {
 		log.Fatal("Failed to initialize database:", err)
 	}
@@ -32,6 +37,13 @@ func main() {
 
 	// Create router
 	router := server.NewRouter(db, jwtManager)
+
+	// Serve frontend static files
+	frontendDir := filepath.Join(".", "web", "dist")
+	if _, err := os.Stat(frontendDir); err == nil {
+		fs := http.FileServer(http.Dir(frontendDir))
+		router.Handle("/*", fs)
+	}
 
 	addr := ":8080"
 	fmt.Printf("UniOps server starting on %s\n", addr)
