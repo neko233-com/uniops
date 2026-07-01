@@ -34,6 +34,6 @@ WORKDIR /root/
 COPY --from=builder /app/uniops .
 COPY --from=frontend-builder /app/web/dist ./web/dist
 
-EXPOSE 8080
+EXPOSE 6020
 
 CMD ["./uniops"]

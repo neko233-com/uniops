@@ -45,7 +45,7 @@ func main() {
 		router.Handle("/*", fs)
 	}
 
-	addr := ":8080"
+	addr := ":6020"
 	fmt.Printf("UniOps server starting on %s\n", addr)
 	log.Fatal(http.ListenAndServe(addr, router))
 }

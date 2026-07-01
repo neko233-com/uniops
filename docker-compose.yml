@@ -4,7 +4,7 @@ services:
   uniops:
     build: .
     ports:
-      - "8080:8080"
+      - "6020:6020"
     volumes:
       - ./data:/root/data
     environment:

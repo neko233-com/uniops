@@ -28,7 +28,7 @@ export function Terminal({ serverId }: TerminalProps) {
 
     termRef.current = term
 
-    const ws = new WebSocket(`ws://localhost:8080/ws/terminal/${serverId}`)
+    const ws = new WebSocket(`ws://localhost:6020/ws/terminal/${serverId}`)
 
     ws.onopen = () => {
       ws.send(JSON.stringify({
