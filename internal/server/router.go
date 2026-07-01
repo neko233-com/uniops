@@ -84,6 +84,16 @@ func NewRouter(db *store.DB, jwtManager *auth.JWTManager) *chi.Mux {
 			r.Get("/{id}", sshKeyHandler.Get)
 		})
 
+		// File Manager routes
+		fileManagerHandler := handlers.NewFileManagerHandler(db)
+		r.Route("/files/{serverId}", func(r chi.Router) {
+			r.Post("/list", fileManagerHandler.ListFiles)
+			r.Get("/*", fileManagerHandler.Download)
+			r.Put("/*", fileManagerHandler.Upload)
+			r.Delete("/*", fileManagerHandler.Delete)
+			r.Post("/mkdir", fileManagerHandler.Mkdir)
+		})
+
 			// Terminal WebSocket
 			terminalHandler := handlers.NewTerminalHandler(db)
 			r.Get("/ws/terminal/{serverId}", terminalHandler.Connect)
