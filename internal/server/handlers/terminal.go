@@ -6,10 +6,13 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/go-chi/chi/v5"
+	"github.com/gorilla/websocket"
 
+	"github.com/neko233/uniops/internal/audit"
+	"github.com/neko233/uniops/internal/model"
 	"github.com/neko233/uniops/internal/ssh"
 	"github.com/neko233/uniops/internal/store"
 )
@@ -53,7 +56,7 @@ func (h *TerminalHandler) Connect(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	session, err := ssh.NewSession(
+	sshSession, err := ssh.NewSession(
 		server.Host,
 		server.Port,
 		server.Username,
@@ -66,7 +69,19 @@ func (h *TerminalHandler) Connect(w http.ResponseWriter, r *http.Request) {
 		))
 		return
 	}
-	defer session.Close()
+	defer sshSession.Close()
+
+	// Create audit session record
+	now := time.Now()
+	dbSession := &model.Session{
+		UserID:    1, // default; authenticated user set via middleware context if available
+		ServerID:  server.ID,
+		StartTime: now,
+		Status:    "active",
+	}
+	h.db.CreateSession(dbSession)
+
+	recorder := audit.NewRecorder(dbSession.ID)
 
 	var mu sync.Mutex
 
@@ -85,8 +100,9 @@ func (h *TerminalHandler) Connect(w http.ResponseWriter, r *http.Request) {
 
 			switch msg.Type {
 			case "input":
+				recorder.RecordInput(msg.Data)
 				mu.Lock()
-				session.Write([]byte(msg.Data))
+				sshSession.Write([]byte(msg.Data))
 				mu.Unlock()
 			case "resize":
 				var dims struct {
@@ -94,7 +110,7 @@ func (h *TerminalHandler) Connect(w http.ResponseWriter, r *http.Request) {
 					Height int `json:"height"`
 				}
 				if err := json.Unmarshal([]byte(msg.Data), &dims); err == nil {
-					session.Resize(dims.Width, dims.Height)
+					sshSession.Resize(dims.Width, dims.Height)
 				}
 			}
 		}
@@ -103,18 +119,28 @@ func (h *TerminalHandler) Connect(w http.ResponseWriter, r *http.Request) {
 	// Read from SSH and write to WebSocket
 	buf := make([]byte, 1024)
 	for {
-		n, err := session.Read(buf)
+		n, err := sshSession.Read(buf)
 		if err != nil {
 			break
 		}
 
+		output := string(buf[:n])
+		recorder.RecordOutput(output)
+
 		msg := TerminalMessage{
 			Type: "output",
-			Data: string(buf[:n]),
+			Data: output,
 		}
 
 		mu.Lock()
 		conn.WriteJSON(msg)
 		mu.Unlock()
 	}
+
+	// Save session replay on disconnect
+	endTime := time.Now()
+	dbSession.EndTime = &endTime
+	dbSession.Status = "closed"
+	dbSession.Replay = recorder.GetReplay()
+	h.db.UpdateSession(dbSession)
 }
