@@ -122,7 +122,7 @@ func TestInitAdmin(t *testing.T) {
 		t.Fatalf("Failed to init admin: %v", err)
 	}
 
-	admin, err := db.GetUserByUsername("admin")
+	admin, err := db.GetUserByUsername("root")
 	if err != nil {
 		t.Fatalf("Failed to get admin: %v", err)
 	}

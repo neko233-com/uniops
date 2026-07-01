@@ -80,7 +80,7 @@ export function Login({ onLogin }: LoginProps) {
         </form>
 
         <div className="mt-6 text-center text-xs text-gray-600">
-          Default: admin / admin
+          Default: root / root
         </div>
       </div>
     </div>

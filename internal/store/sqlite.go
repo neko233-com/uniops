@@ -41,13 +41,13 @@ func (db *DB) InitAdmin() error {
 		return nil
 	}
 
-	hash, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte("root"), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
 	admin := &model.User{
-		Username: "admin",
+		Username: "root",
 		Password: string(hash),
 		Role:     "admin",
 	}
