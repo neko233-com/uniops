@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          
+      - name: Build Linux
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o uniops-linux-amd64 ./cmd/uniops
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o uniops-linux-arm64 ./cmd/uniops
+          
+      - name: Build Windows
+        run: |
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o uniops-windows-amd64.exe ./cmd/uniops
+          
+      - name: Build macOS
+        run: |
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o uniops-darwin-amd64 ./cmd/uniops
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o uniops-darwin-arm64 ./cmd/uniops
+          
+      - name: Build Frontend
+        run: |
+          cd web
+          npm ci
+          npm run build
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          files: |
+            uniops-linux-amd64
+            uniops-linux-arm64
+            uniops-windows-amd64.exe
+            uniops-darwin-amd64
+            uniops-darwin-arm64
+            web/dist/*
