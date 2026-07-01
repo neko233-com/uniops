@@ -8,6 +8,7 @@ import { Monitor } from './Monitor'
 import { AgentChat } from './AgentChat'
 import { Audit } from './Audit'
 import { ServerSelector } from './ServerSelector'
+import { ServerManager } from './ServerManager'
 
 interface App {
   id: string
@@ -31,6 +32,7 @@ export function Desktop({ user, onLogout }: DesktopProps) {
     { id: 'monitor', title: 'Monitor', icon: '📊', component: () => <Monitor serverId={selectedServerId ?? 0} /> },
     { id: 'agent', title: 'Agent', icon: '🤖', component: () => <AgentChat agentId={1} /> },
     { id: 'audit', title: 'Audit', icon: '📋', component: () => <Audit /> },
+    { id: 'servers', title: 'Servers', icon: '🖥️', component: () => <ServerManager /> },
   ]
 
   const activeAppData = apps.find(a => a.id === activeApp)
