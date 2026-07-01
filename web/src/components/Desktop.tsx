@@ -7,6 +7,7 @@ import { FileManager } from './FileManager'
 import { Monitor } from './Monitor'
 import { AgentChat } from './AgentChat'
 import { Audit } from './Audit'
+import { ServerSelector } from './ServerSelector'
 
 interface App {
   id: string
@@ -15,16 +16,17 @@ interface App {
   component: React.ComponentType
 }
 
-const apps: App[] = [
-  { id: 'terminal', title: 'Terminal', icon: '🖥️', component: () => <Terminal serverId={1} /> },
-  { id: 'files', title: 'Files', icon: '📁', component: () => <FileManager serverId={1} /> },
-  { id: 'monitor', title: 'Monitor', icon: '📊', component: () => <Monitor serverId={1} /> },
-  { id: 'agent', title: 'Agent', icon: '🤖', component: () => <AgentChat agentId={1} /> },
-  { id: 'audit', title: 'Audit', icon: '📋', component: () => <Audit /> },
-]
-
 export function Desktop() {
   const [activeApp, setActiveApp] = useState<string | null>(null)
+  const [selectedServerId, setSelectedServerId] = useState<number | null>(null)
+
+  const apps: App[] = [
+    { id: 'terminal', title: 'Terminal', icon: '🖥️', component: () => <Terminal serverId={selectedServerId ?? 0} /> },
+    { id: 'files', title: 'Files', icon: '📁', component: () => <FileManager serverId={selectedServerId ?? 0} /> },
+    { id: 'monitor', title: 'Monitor', icon: '📊', component: () => <Monitor serverId={selectedServerId ?? 0} /> },
+    { id: 'agent', title: 'Agent', icon: '🤖', component: () => <AgentChat agentId={1} /> },
+    { id: 'audit', title: 'Audit', icon: '📋', component: () => <Audit /> },
+  ]
 
   const activeAppData = apps.find(a => a.id === activeApp)
 
@@ -32,12 +34,17 @@ export function Desktop() {
     <div className="h-screen flex flex-col rog-bg">
       <div className="flex-1 flex overflow-hidden">
         <Sidebar apps={apps} onSelect={setActiveApp} />
-        <main className="flex-1 overflow-auto p-4">
-          {activeAppData && (
-            <Window title={activeAppData.title}>
-              <activeAppData.component />
-            </Window>
-          )}
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <div className="rog-panel-header flex items-center justify-between px-4 py-2 border-b border-gray-800">
+            <ServerSelector onSelect={setSelectedServerId} selectedId={selectedServerId} />
+          </div>
+          <div className="flex-1 overflow-auto p-4">
+            {activeAppData && (
+              <Window title={activeAppData.title}>
+                <activeAppData.component />
+              </Window>
+            )}
+          </div>
         </main>
       </div>
       <Taskbar apps={apps} activeApp={activeApp} onSelect={setActiveApp} />
