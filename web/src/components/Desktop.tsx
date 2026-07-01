@@ -4,6 +4,7 @@ import { Sidebar } from './Sidebar'
 import { Window } from './Window'
 import { Terminal } from './Terminal'
 import { FileManager } from './FileManager'
+import { Monitor } from './Monitor'
 
 interface App {
   id: string
@@ -15,7 +16,7 @@ interface App {
 const apps: App[] = [
   { id: 'terminal', title: 'Terminal', icon: '🖥️', component: () => <Terminal serverId={1} /> },
   { id: 'files', title: 'Files', icon: '📁', component: () => <FileManager serverId={1} /> },
-  { id: 'monitor', title: 'Monitor', icon: '📊', component: () => <div>Monitor</div> },
+  { id: 'monitor', title: 'Monitor', icon: '📊', component: () => <Monitor serverId={1} /> },
   { id: 'agent', title: 'Agent', icon: '🤖', component: () => <div>Agent</div> },
   { id: 'audit', title: 'Audit', icon: '📋', component: () => <div>Audit</div> },
 ]
