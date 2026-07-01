@@ -25,7 +25,7 @@ export function Desktop() {
   const activeAppData = apps.find(a => a.id === activeApp)
 
   return (
-    <div className="h-screen flex flex-col bg-gray-900">
+    <div className="h-screen flex flex-col rog-bg">
       <div className="flex-1 flex overflow-hidden">
         <Sidebar apps={apps} onSelect={setActiveApp} />
         <main className="flex-1 overflow-auto p-4">

@@ -1,0 +1,167 @@
+/* ROG (Republic of Gamers) Dark Theme */
+:root {
+  --rog-red: #ff0033;
+  --rog-red-dark: #cc0029;
+  --rog-black: #0a0a0a;
+  --rog-dark: #121212;
+  --rog-gray: #1a1a1a;
+  --rog-gray-light: #2a2a2a;
+  --rog-gray-lighter: #3a3a3a;
+  --rog-text: #e0e0e0;
+  --rog-text-dim: #888888;
+  --rog-accent: #ff0033;
+  --rog-accent-glow: rgba(255, 0, 51, 0.3);
+  --rog-border: #2a2a2a;
+}
+
+/* ROG Background Patterns */
+.rog-bg {
+  background: linear-gradient(135deg, var(--rog-black) 0%, var(--rog-dark) 100%);
+  position: relative;
+}
+
+.rog-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, var(--rog-accent-glow) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(255, 0, 51, 0.1) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* ROG Panel Styles */
+.rog-panel {
+  background: var(--rog-gray);
+  border: 1px solid var(--rog-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.rog-panel-header {
+  background: linear-gradient(90deg, var(--rog-gray-light) 0%, var(--rog-gray) 100%);
+  border-bottom: 1px solid var(--rog-border);
+  padding: 12px 16px;
+}
+
+/* ROG Button Styles */
+.rog-btn {
+  background: linear-gradient(180deg, var(--rog-gray-lighter) 0%, var(--rog-gray) 100%);
+  border: 1px solid var(--rog-border);
+  color: var(--rog-text);
+  padding: 8px 16px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.rog-btn:hover {
+  background: linear-gradient(180deg, var(--rog-gray-light) 0%, var(--rog-gray-lighter) 100%);
+  border-color: var(--rog-accent);
+  box-shadow: 0 0 10px var(--rog-accent-glow);
+}
+
+.rog-btn-primary {
+  background: linear-gradient(180deg, var(--rog-red) 0%, var(--rog-red-dark) 100%);
+  border-color: var(--rog-red);
+  color: white;
+}
+
+.rog-btn-primary:hover {
+  background: linear-gradient(180deg, var(--rog-red-dark) 0%, var(--rog-red) 100%);
+  box-shadow: 0 0 20px var(--rog-accent-glow);
+}
+
+/* ROG Input Styles */
+.rog-input {
+  background: var(--rog-black);
+  border: 1px solid var(--rog-border);
+  color: var(--rog-text);
+  padding: 8px 12px;
+  border-radius: 2px;
+}
+
+.rog-input:focus {
+  outline: none;
+  border-color: var(--rog-accent);
+  box-shadow: 0 0 10px var(--rog-accent-glow);
+}
+
+/* ROG Sidebar Styles */
+.rog-sidebar {
+  background: linear-gradient(180deg, var(--rog-gray) 0%, var(--rog-black) 100%);
+  border-right: 1px solid var(--rog-border);
+}
+
+.rog-sidebar-item {
+  padding: 10px 16px;
+  color: var(--rog-text-dim);
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.rog-sidebar-item:hover {
+  background: var(--rog-gray-light);
+  color: var(--rog-text);
+  border-left-color: var(--rog-accent);
+}
+
+.rog-sidebar-item.active {
+  background: var(--rog-gray-light);
+  color: var(--rog-text);
+  border-left-color: var(--rog-accent);
+}
+
+/* ROG Taskbar Styles */
+.rog-taskbar {
+  background: linear-gradient(90deg, var(--rog-black) 0%, var(--rog-gray) 50%, var(--rog-black) 100%);
+  border-top: 1px solid var(--rog-border);
+}
+
+/* ROG Logo/Brand */
+.rog-brand {
+  color: var(--rog-accent);
+  font-weight: bold;
+  text-shadow: 0 0 10px var(--rog-accent-glow);
+}
+
+/* ROG Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--rog-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rog-gray-lighter);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rog-accent);
+}
+
+/* ROG Terminal */
+.rog-terminal {
+  background: var(--rog-black);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ROG Glow Effects */
+.rog-glow {
+  animation: rog-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes rog-glow {
+  from {
+    box-shadow: 0 0 5px var(--rog-accent-glow);
+  }
+  to {
+    box-shadow: 0 0 20px var(--rog-accent-glow);
+  }
+}

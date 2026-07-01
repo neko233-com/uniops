@@ -5,19 +5,26 @@ interface SidebarProps {
 
 export function Sidebar({ apps, onSelect }: SidebarProps) {
   return (
-    <div className="w-48 bg-gray-800 border-r border-gray-700 p-4">
-      <h2 className="text-white font-bold mb-4">UniOps</h2>
-      <nav className="space-y-1">
+    <div className="w-48 rog-sidebar flex flex-col">
+      <div className="p-4 border-b border-gray-800">
+        <h2 className="text-xl font-bold rog-brand">UNIOPS</h2>
+        <p className="text-xs text-gray-500 mt-1">Agent-First Bastion</p>
+      </div>
+      <nav className="flex-1 p-2">
         {apps.map(app => (
           <button
             key={app.id}
             onClick={() => onSelect(app.id)}
-            className="w-full text-left px-3 py-2 rounded text-gray-300 hover:bg-gray-700"
+            className="rog-sidebar-item w-full text-left"
           >
-            {app.icon} {app.title}
+            <span className="mr-3">{app.icon}</span>
+            {app.title}
           </button>
         ))}
       </nav>
+      <div className="p-4 border-t border-gray-800">
+        <div className="text-xs text-gray-500">v1.0.0</div>
+      </div>
     </div>
   )
 }
