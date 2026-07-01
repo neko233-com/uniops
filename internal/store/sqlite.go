@@ -25,6 +25,7 @@ func New(dbPath string) (*DB, error) {
 		&model.Agent{},
 		&model.Session{},
 		&model.Command{},
+		&model.SSHKey{},
 	)
 	if err != nil {
 		return nil, err
@@ -129,4 +130,30 @@ func (db *DB) GetCommandsBySession(sessionID uint) ([]model.Command, error) {
 	var commands []model.Command
 	err := db.Where("session_id = ?", sessionID).Find(&commands).Error
 	return commands, err
+}
+
+func (db *DB) GetSSHKeysByServer(serverID uint) ([]model.SSHKey, error) {
+	var keys []model.SSHKey
+	err := db.Where("server_id = ?", serverID).Find(&keys).Error
+	return keys, err
+}
+
+func (db *DB) CreateSSHKey(key *model.SSHKey) error {
+	return db.Create(key).Error
+}
+
+func (db *DB) GetSSHKeyByFingerprint(fingerprint string) (*model.SSHKey, error) {
+	var key model.SSHKey
+	err := db.Where("fingerprint = ?", fingerprint).First(&key).Error
+	return &key, err
+}
+
+func (db *DB) UpdateSSHKey(key *model.SSHKey) error {
+	return db.Save(key).Error
+}
+
+func (db *DB) GetSSHKey(id uint) (*model.SSHKey, error) {
+	var key model.SSHKey
+	err := db.First(&key, id).Error
+	return &key, err
 }
