@@ -16,7 +16,12 @@ interface App {
   component: React.ComponentType
 }
 
-export function Desktop() {
+interface DesktopProps {
+  user: any
+  onLogout: () => void
+}
+
+export function Desktop({ user, onLogout }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<string | null>(null)
   const [selectedServerId, setSelectedServerId] = useState<number | null>(null)
 
@@ -37,6 +42,10 @@ export function Desktop() {
         <main className="flex-1 flex flex-col overflow-hidden">
           <div className="rog-panel-header flex items-center justify-between px-4 py-2 border-b border-gray-800">
             <ServerSelector onSelect={setSelectedServerId} selectedId={selectedServerId} />
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-400">{user?.username}</span>
+              <button onClick={onLogout} className="rog-btn text-sm">Logout</button>
+            </div>
           </div>
           <div className="flex-1 overflow-auto p-4">
             {activeAppData && (
