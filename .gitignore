@@ -1,6 +1,6 @@
 # Binaries
 uniops.exe
-uniops
+/uniops
 
 # Dependencies
 web/node_modules/
