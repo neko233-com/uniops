@@ -5,11 +5,15 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/gorilla/websocket"
 
 	"github.com/neko233/uniops/internal/auth"
 	"github.com/neko233/uniops/internal/server/handlers"
 	"github.com/neko233/uniops/internal/store"
 )
+
+// Prevent unused import error for gorilla/websocket (used in terminal.go)
+var _ = websocket.Upgrader{}
 
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +71,10 @@ func NewRouter(db *store.DB, jwtManager *auth.JWTManager) *chi.Mux {
 				r.Post("/", agentHandler.Create)
 				r.Delete("/{id}", agentHandler.Delete)
 			})
+
+			// Terminal WebSocket
+			terminalHandler := handlers.NewTerminalHandler(db)
+			r.Get("/ws/terminal/{serverId}", terminalHandler.Connect)
 		})
 	})
 
