@@ -98,6 +98,10 @@ func NewRouter(db *store.DB, jwtManager *auth.JWTManager) *chi.Mux {
 		monitorHandler := handlers.NewMonitorHandler(db)
 		r.Get("/monitor/{serverId}", monitorHandler.GetMetrics)
 
+			// Agent Chat routes
+			agentChatHandler := handlers.NewAgentChatHandler(db)
+			r.Post("/agent/chat", agentChatHandler.Chat)
+
 			// Terminal WebSocket
 			terminalHandler := handlers.NewTerminalHandler(db)
 			r.Get("/ws/terminal/{serverId}", terminalHandler.Connect)
