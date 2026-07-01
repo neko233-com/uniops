@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniOps - Agent-First Bastion Host</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="rog-bg min-h-screen">
+        <header class="rog-panel-header">
+            <div class="container mx-auto px-4">
+                <h1 class="text-2xl font-bold rog-brand">UNIOPS</h1>
+                <p class="text-gray-400">Agent-First Bastion Host Platform</p>
+            </div>
+        </header>
+
+        <main class="container mx-auto px-4 py-8">
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4">Features</h2>
+                <ul class="space-y-2">
+                    <li class="rog-panel p-4">SSH Proxy with Auto Key Deployment</li>
+                    <li class="rog-panel p-4">Agent Management (Claude, Codex, Custom)</li>
+                    <li class="rog-panel p-4">Session Recording & Audit</li>
+                    <li class="rog-panel p-4">Web Terminal with xterm.js</li>
+                    <li class="rog-panel p-4">ROG Dark Theme UI</li>
+                </ul>
+            </section>
+
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4">Quick Start</h2>
+                <div class="rog-panel p-4">
+                    <pre class="text-sm text-gray-300">
+# Docker
+docker-compose up -d
+
+# Or build from source
+CGO_ENABLED=0 go build -o uniops ./cmd/uniops
+./uniops
+                    </pre>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold mb-4">Download</h2>
+                <div class="rog-panel p-4">
+                    <p>Download the latest release from <a href="https://github.com/neko233/uniops/releases" class="rog-brand">GitHub Releases</a></p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="rog-panel-header mt-8">
+            <div class="container mx-auto px-4 text-center text-gray-500">
+                <p>&copy; 2026 UniOps. Built with Go & React.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

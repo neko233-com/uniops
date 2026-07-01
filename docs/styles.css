@@ -1,0 +1,206 @@
+/* ROG (Republic of Gamers) Dark Theme */
+:root {
+  --rog-red: #ff0033;
+  --rog-red-dark: #cc0029;
+  --rog-black: #0a0a0a;
+  --rog-dark: #121212;
+  --rog-gray: #1a1a1a;
+  --rog-gray-light: #2a2a2a;
+  --rog-gray-lighter: #3a3a3a;
+  --rog-text: #e0e0e0;
+  --rog-text-dim: #888888;
+  --rog-accent: #ff0033;
+  --rog-accent-glow: rgba(255, 0, 51, 0.3);
+  --rog-border: #2a2a2a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--rog-black);
+  color: var(--rog-text);
+}
+
+/* ROG Background Patterns */
+.rog-bg {
+  background: linear-gradient(135deg, var(--rog-black) 0%, var(--rog-dark) 100%);
+  position: relative;
+  min-height: 100vh;
+}
+
+.rog-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 80%, var(--rog-accent-glow) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(255, 0, 51, 0.1) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* Layout */
+.container {
+  max-width: 900px;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* ROG Panel Styles */
+.rog-panel {
+  background: var(--rog-gray);
+  border: 1px solid var(--rog-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.rog-panel-header {
+  background: linear-gradient(90deg, var(--rog-gray-light) 0%, var(--rog-gray) 100%);
+  border-bottom: 1px solid var(--rog-border);
+  padding: 12px 16px;
+}
+
+/* Typography */
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.text-gray-300 {
+  color: #d1d5db;
+}
+
+.text-gray-400 {
+  color: #9ca3af;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+/* ROG Brand */
+.rog-brand {
+  color: var(--rog-accent);
+  font-weight: bold;
+  text-shadow: 0 0 10px var(--rog-accent-glow);
+}
+
+.rog-brand a {
+  color: var(--rog-accent);
+  text-decoration: none;
+}
+
+.rog-brand a:hover {
+  text-decoration: underline;
+}
+
+/* List */
+ul {
+  list-style: none;
+}
+
+.space-y-2 > li + li {
+  margin-top: 0.5rem;
+}
+
+/* Pre */
+pre {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  white-space: pre-wrap;
+  background: var(--rog-black);
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--rog-border);
+}
+
+/* ROG Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--rog-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rog-gray-lighter);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rog-accent);
+}
+
+/* ROG Glow Effects */
+.rog-glow {
+  animation: rog-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes rog-glow {
+  from {
+    box-shadow: 0 0 5px var(--rog-accent-glow);
+  }
+  to {
+    box-shadow: 0 0 20px var(--rog-accent-glow);
+  }
+}
