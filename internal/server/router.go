@@ -75,6 +75,15 @@ func NewRouter(db *store.DB, jwtManager *auth.JWTManager) *chi.Mux {
 			r.Post("/{id}/test", agentHandler.Test)
 		})
 
+		// SSH Key routes
+		sshKeyHandler := handlers.NewSSHKeyHandler(db)
+		r.Route("/sshkeys", func(r chi.Router) {
+			r.Post("/generate", sshKeyHandler.Generate)
+			r.Post("/deploy", sshKeyHandler.Deploy)
+			r.Get("/server/{serverId}", sshKeyHandler.List)
+			r.Get("/{id}", sshKeyHandler.Get)
+		})
+
 			// Terminal WebSocket
 			terminalHandler := handlers.NewTerminalHandler(db)
 			r.Get("/ws/terminal/{serverId}", terminalHandler.Connect)
