@@ -64,13 +64,16 @@ func NewRouter(db *store.DB, jwtManager *auth.JWTManager) *chi.Mux {
 				r.Delete("/{id}", serverHandler.Delete)
 			})
 
-			// Agent routes
-			agentHandler := handlers.NewAgentHandler(db)
-			r.Route("/agents", func(r chi.Router) {
-				r.Get("/", agentHandler.List)
-				r.Post("/", agentHandler.Create)
-				r.Delete("/{id}", agentHandler.Delete)
-			})
+		// Agent routes
+		agentHandler := handlers.NewAgentHandler(db)
+		r.Route("/agents", func(r chi.Router) {
+			r.Get("/", agentHandler.List)
+			r.Post("/", agentHandler.Create)
+			r.Get("/{id}", agentHandler.Get)
+			r.Put("/{id}", agentHandler.Update)
+			r.Delete("/{id}", agentHandler.Delete)
+			r.Post("/{id}/test", agentHandler.Test)
+		})
 
 			// Terminal WebSocket
 			terminalHandler := handlers.NewTerminalHandler(db)

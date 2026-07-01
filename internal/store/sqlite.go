@@ -98,6 +98,16 @@ func (db *DB) CreateAgent(agent *model.Agent) error {
 	return db.Create(agent).Error
 }
 
+func (db *DB) GetAgent(id uint) (*model.Agent, error) {
+	var agent model.Agent
+	err := db.First(&agent, id).Error
+	return &agent, err
+}
+
+func (db *DB) UpdateAgent(agent *model.Agent) error {
+	return db.Save(agent).Error
+}
+
 func (db *DB) DeleteAgent(id uint) error {
 	return db.Delete(&model.Agent{}, id).Error
 }
