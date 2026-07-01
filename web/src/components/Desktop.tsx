@@ -6,6 +6,7 @@ import { Terminal } from './Terminal'
 import { FileManager } from './FileManager'
 import { Monitor } from './Monitor'
 import { AgentChat } from './AgentChat'
+import { Audit } from './Audit'
 
 interface App {
   id: string
@@ -19,7 +20,7 @@ const apps: App[] = [
   { id: 'files', title: 'Files', icon: '📁', component: () => <FileManager serverId={1} /> },
   { id: 'monitor', title: 'Monitor', icon: '📊', component: () => <Monitor serverId={1} /> },
   { id: 'agent', title: 'Agent', icon: '🤖', component: () => <AgentChat agentId={1} /> },
-  { id: 'audit', title: 'Audit', icon: '📋', component: () => <div>Audit</div> },
+  { id: 'audit', title: 'Audit', icon: '📋', component: () => <Audit /> },
 ]
 
 export function Desktop() {
