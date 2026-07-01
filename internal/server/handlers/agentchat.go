@@ -40,6 +40,8 @@ func (h *AgentChatHandler) Chat(w http.ResponseWriter, r *http.Request) {
 		provider = agent.NewClaudeProvider(agentModel.APIKey, agentModel.Endpoint, "")
 	case "openai":
 		provider = agent.NewOpenAIProvider(agentModel.APIKey, agentModel.Endpoint, "")
+	case "custom":
+		provider = agent.NewCustomProvider(agentModel.APIKey, agentModel.Endpoint)
 	default:
 		http.Error(w, "unsupported agent type", http.StatusBadRequest)
 		return
