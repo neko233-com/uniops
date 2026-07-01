@@ -59,6 +59,14 @@ func NewRouter(db *store.DB, jwtManager *auth.JWTManager) *chi.Mux {
 				r.Put("/{id}", serverHandler.Update)
 				r.Delete("/{id}", serverHandler.Delete)
 			})
+
+			// Agent routes
+			agentHandler := handlers.NewAgentHandler(db)
+			r.Route("/agents", func(r chi.Router) {
+				r.Get("/", agentHandler.List)
+				r.Post("/", agentHandler.Create)
+				r.Delete("/{id}", agentHandler.Delete)
+			})
 		})
 	})
 
