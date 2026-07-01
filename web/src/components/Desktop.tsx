@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Taskbar } from './Taskbar'
 import { Sidebar } from './Sidebar'
 import { Window } from './Window'
+import { Terminal } from './Terminal'
 
 interface App {
   id: string
@@ -11,7 +12,7 @@ interface App {
 }
 
 const apps: App[] = [
-  { id: 'terminal', title: 'Terminal', icon: '🖥️', component: () => <div>Terminal</div> },
+  { id: 'terminal', title: 'Terminal', icon: '🖥️', component: () => <Terminal serverId={1} /> },
   { id: 'files', title: 'Files', icon: '📁', component: () => <div>Files</div> },
   { id: 'monitor', title: 'Monitor', icon: '📊', component: () => <div>Monitor</div> },
   { id: 'agent', title: 'Agent', icon: '🤖', component: () => <div>Agent</div> },
