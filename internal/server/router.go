@@ -49,6 +49,16 @@ func NewRouter(db *store.DB, jwtManager *auth.JWTManager) *chi.Mux {
 			r.Use(auth.AuthMiddleware(jwtManager))
 
 			r.Get("/auth/me", authHandler.Me)
+
+			// Server routes
+			serverHandler := handlers.NewServerHandler(db)
+			r.Route("/servers", func(r chi.Router) {
+				r.Get("/", serverHandler.List)
+				r.Post("/", serverHandler.Create)
+				r.Get("/{id}", serverHandler.Get)
+				r.Put("/{id}", serverHandler.Update)
+				r.Delete("/{id}", serverHandler.Delete)
+			})
 		})
 	})
 
