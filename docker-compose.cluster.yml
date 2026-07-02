@@ -1,0 +1,64 @@
+# Docker 集群测试环境 - 模拟 3 节点 Linux 集群
+# docker compose -f docker-compose.cluster.yml up -d --build
+# 节点 SSH: root / uniops123
+# node-1: localhost:2221, node-2: localhost:2222, node-3: localhost:2223
+
+services:
+  uniops:
+    build: .
+    ports:
+      - "6020:6020"
+    environment:
+      - JWT_SECRET=dev-secret
+      - DB_PATH=/root/data/uniops.db
+    volumes:
+      - ./data:/root/data
+    depends_on:
+      - cluster-node-1
+      - cluster-node-2
+      - cluster-node-3
+    networks:
+      - cluster
+
+  cluster-node-1:
+    build:
+      context: .
+      dockerfile: Dockerfile.cluster
+    ports:
+      - "2221:22"
+    container_name: uniops-node-1
+    hostname: node-1
+    networks:
+      cluster:
+        ipv4_address: 172.28.0.11
+
+  cluster-node-2:
+    build:
+      context: .
+      dockerfile: Dockerfile.cluster
+    ports:
+      - "2222:22"
+    container_name: uniops-node-2
+    hostname: node-2
+    networks:
+      cluster:
+        ipv4_address: 172.28.0.12
+
+  cluster-node-3:
+    build:
+      context: .
+      dockerfile: Dockerfile.cluster
+    ports:
+      - "2223:22"
+    container_name: uniops-node-3
+    hostname: node-3
+    networks:
+      cluster:
+        ipv4_address: 172.28.0.13
+
+networks:
+  cluster:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

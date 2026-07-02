@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/neko233/uniops/internal/auth"
+	"github.com/neko233/uniops/internal/oplog"
 	"github.com/neko233/uniops/internal/server"
 	"github.com/neko233/uniops/internal/store"
 	"github.com/neko233/uniops/web"
@@ -36,7 +37,8 @@ func main() {
 	}
 	jwtManager := auth.NewJWTManager(secret)
 
-	router := server.NewRouter(db, jwtManager)
+	opLogger := oplog.New("logs")
+	router := server.NewRouter(db, jwtManager, opLogger)
 
 	// Serve frontend: embedded FS with disk fallback for dev
 	var frontendFS http.FileSystem

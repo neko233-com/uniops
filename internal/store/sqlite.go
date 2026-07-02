@@ -26,6 +26,7 @@ func New(dbPath string) (*DB, error) {
 		&model.Session{},
 		&model.Command{},
 		&model.SSHKey{},
+		&model.Deployment{},
 	)
 	if err != nil {
 		return nil, err
@@ -166,4 +167,30 @@ func (db *DB) GetSSHKey(id uint) (*model.SSHKey, error) {
 	var key model.SSHKey
 	err := db.First(&key, id).Error
 	return &key, err
+}
+
+func (db *DB) GetDeployments() ([]model.Deployment, error) {
+	var deployments []model.Deployment
+	err := db.Preload("Server").Order("created_at DESC").Find(&deployments).Error
+	return deployments, err
+}
+
+func (db *DB) GetDeploymentsByServer(serverID uint) ([]model.Deployment, error) {
+	var deployments []model.Deployment
+	err := db.Where("server_id = ?", serverID).Order("created_at DESC").Find(&deployments).Error
+	return deployments, err
+}
+
+func (db *DB) GetDeployment(id uint) (*model.Deployment, error) {
+	var deployment model.Deployment
+	err := db.Preload("Server").First(&deployment, id).Error
+	return &deployment, err
+}
+
+func (db *DB) CreateDeployment(deployment *model.Deployment) error {
+	return db.Create(deployment).Error
+}
+
+func (db *DB) UpdateDeployment(deployment *model.Deployment) error {
+	return db.Save(deployment).Error
 }
