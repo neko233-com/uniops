@@ -15,34 +15,52 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
-      - name: Set up Go
-        uses: actions/setup-go@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          go-version: '1.26'
-          
-      - name: Build Linux
-        run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o uniops-linux-amd64 ./cmd/uniops
-          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o uniops-linux-arm64 ./cmd/uniops
-          
-      - name: Build Windows
-        run: |
-          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o uniops-windows-amd64.exe ./cmd/uniops
-          
-      - name: Build macOS
-        run: |
-          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o uniops-darwin-amd64 ./cmd/uniops
-          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o uniops-darwin-arm64 ./cmd/uniops
-          
+          node-version: '22'
+
       - name: Build Frontend
         run: |
           cd web
           npm ci
           npm run build
-          
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Set version
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Build Linux
+        env:
+          CGO_ENABLED: "0"
+          GOOS: linux
+        run: |
+          GOARCH=amd64 go build -ldflags "-s -w -X main.version=${{ steps.version.outputs.VERSION }}" -o uniops-linux-amd64 ./cmd/uniops
+          GOARCH=arm64 go build -ldflags "-s -w -X main.version=${{ steps.version.outputs.VERSION }}" -o uniops-linux-arm64 ./cmd/uniops
+
+      - name: Build Windows
+        env:
+          CGO_ENABLED: "0"
+          GOOS: windows
+          GOARCH: amd64
+        run: go build -ldflags "-s -w -X main.version=${{ steps.version.outputs.VERSION }}" -o uniops-windows-amd64.exe ./cmd/uniops
+
+      - name: Build macOS
+        env:
+          CGO_ENABLED: "0"
+          GOOS: darwin
+        run: |
+          GOARCH=amd64 go build -ldflags "-s -w -X main.version=${{ steps.version.outputs.VERSION }}" -o uniops-darwin-amd64 ./cmd/uniops
+          GOARCH=arm64 go build -ldflags "-s -w -X main.version=${{ steps.version.outputs.VERSION }}" -o uniops-darwin-arm64 ./cmd/uniops
+
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
           files: |
@@ -51,4 +69,3 @@ jobs:
             uniops-windows-amd64.exe
             uniops-darwin-amd64
             uniops-darwin-arm64
-            web/dist/*

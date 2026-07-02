@@ -4,7 +4,8 @@ uniops.exe
 
 # Dependencies
 web/node_modules/
-web/dist/
+web/dist/*
+!web/dist/.gitkeep
 
 # IDE
 .vscode/
