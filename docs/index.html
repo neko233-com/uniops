@@ -1,59 +1,641 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniOps - Agent-First Bastion Host</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniOps - Agent-First Bastion Host</title>
+<link rel="icon" type="image/svg+xml" href="/uniops/favicon.svg">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --bg-surface: #121212;
+  --bg-card: #1a1a1a;
+  --bg-hover: #222;
+  --border: #2a2a2a;
+  --text: #e0e0e0;
+  --text-dim: #888;
+  --text-muted: #555;
+  --accent: #ff0033;
+  --accent-glow: rgba(255,0,51,.25);
+  --blue: #3b82f6;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --sidebar-w: 240px;
+  --header-h: 56px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Sidebar ── */
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  display: flex; flex-direction: column;
+}
+.sidebar-brand {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-brand h1 {
+  font-size: 20px; font-weight: 800;
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent-glow);
+  letter-spacing: 2px;
+}
+.sidebar-brand p {
+  font-size: 10px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px;
+}
+.sidebar nav { flex: 1; padding: 12px 0; }
+.sidebar .group-label {
+  padding: 8px 20px 4px;
+  font-size: 10px; font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.2px;
+}
+.sidebar a {
+  display: block;
+  padding: 7px 20px 7px 28px;
+  font-size: 13px;
+  color: var(--text-dim);
+  border-left: 3px solid transparent;
+  transition: all .15s;
+}
+.sidebar a:hover {
+  color: var(--text);
+  background: var(--bg-hover);
+  border-left-color: var(--accent);
+  text-decoration: none;
+}
+.sidebar a.active {
+  color: #fff;
+  background: rgba(255,0,51,.08);
+  border-left-color: var(--accent);
+}
+.sidebar-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text-muted);
+}
+
+/* ── Main ── */
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+}
+.main-inner {
+  max-width: 820px;
+  padding: 40px 48px 80px;
+}
+
+/* ── Typography ── */
+h2 {
+  font-size: 28px; font-weight: 800; margin: 56px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  color: #fff;
+}
+h2:first-of-type { margin-top: 0; }
+h3 {
+  font-size: 18px; font-weight: 700; margin: 32px 0 12px;
+  color: #fff;
+}
+h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
+p { margin-bottom: 12px; color: var(--text-dim); }
+p strong { color: var(--text); }
+
+/* ── Code ── */
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  background: var(--bg-card);
+  padding: 2px 6px; border-radius: 3px;
+  border: 1px solid var(--border);
+}
+pre {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 12px 0 20px;
+  line-height: 1.5;
+}
+pre code { background: none; border: none; padding: 0; font-size: 13px; color: var(--text-dim); }
+
+/* ── Cards ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  margin: 12px 0 20px;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 12px 0 20px;
+}
+.card-grid .card { margin: 0; }
+.card h4 { margin: 0 0 6px; }
+.card p { margin: 0; font-size: 13px; }
+
+/* ── Table ── */
+table {
+  width: 100%; border-collapse: collapse;
+  margin: 12px 0 20px;
+  font-size: 13px;
+}
+th {
+  text-align: left;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border-bottom: 2px solid var(--border);
+  color: var(--text-muted);
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .5px;
+}
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+}
+tr:hover td { background: rgba(255,255,255,.02); }
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px; font-weight: 600;
+  font-family: monospace;
+}
+.badge-get { background: rgba(59,130,246,.15); color: var(--blue); }
+.badge-post { background: rgba(34,197,94,.15); color: var(--green); }
+.badge-put { background: rgba(245,158,11,.15); color: var(--amber); }
+.badge-delete { background: rgba(255,0,51,.15); color: var(--accent); }
+
+/* ── Hero ── */
+.hero {
+  padding: 48px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.hero h1 {
+  font-size: 40px; font-weight: 900; color: #fff;
+  margin-bottom: 12px;
+}
+.hero h1 span { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+.hero p { font-size: 16px; color: var(--text-dim); max-width: 600px; }
+.hero-badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 4px;
+  font-size: 12px; font-weight: 600;
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.hero-badge b { color: var(--text); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .main-inner { padding: 24px 20px 60px; }
+}
+</style>
 </head>
 <body>
-    <div class="rog-bg min-h-screen">
-        <header class="rog-panel-header">
-            <div class="container mx-auto px-4">
-                <h1 class="text-2xl font-bold rog-brand">UNIOPS</h1>
-                <p class="text-gray-400">Agent-First Bastion Host Platform</p>
-            </div>
-        </header>
 
-        <main class="container mx-auto px-4 py-8">
-            <section class="mb-8">
-                <h2 class="text-xl font-bold mb-4">Features</h2>
-                <ul class="space-y-2">
-                    <li class="rog-panel p-4">SSH Proxy with Auto Key Deployment</li>
-                    <li class="rog-panel p-4">Agent Management (Claude, Codex, Custom)</li>
-                    <li class="rog-panel p-4">Session Recording & Audit</li>
-                    <li class="rog-panel p-4">Web Terminal with xterm.js</li>
-                    <li class="rog-panel p-4">ROG Dark Theme UI</li>
-                </ul>
-            </section>
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1>UNIOPS</h1>
+    <p>Agent-First Bastion</p>
+  </div>
+  <nav>
+    <div class="group-label">Getting Started</div>
+    <a href="#overview">Overview</a>
+    <a href="#quickstart">Quick Start</a>
+    <a href="#architecture">Architecture</a>
 
-            <section class="mb-8">
-                <h2 class="text-xl font-bold mb-4">Quick Start</h2>
-                <div class="rog-panel p-4">
-                    <pre class="text-sm text-gray-300">
-# Docker
-docker-compose up -d
+    <div class="group-label">Infrastructure</div>
+    <a href="#servers">Server Management</a>
+    <a href="#terminal">Web Terminal</a>
+    <a href="#files">File Manager</a>
+    <a href="#monitor">Monitoring</a>
 
-# Or build from source
-CGO_ENABLED=0 go build -o uniops ./cmd/uniops
-./uniops
-                    </pre>
-                </div>
-            </section>
+    <div class="group-label">Automation</div>
+    <a href="#deploy">Deployment</a>
+    <a href="#agent">AI Agent</a>
+    <a href="#nginx">Nginx Reverse Proxy</a>
 
-            <section>
-                <h2 class="text-xl font-bold mb-4">Download</h2>
-                <div class="rog-panel p-4">
-                    <p>Download the latest release from <a href="https://github.com/neko233/uniops/releases" class="rog-brand">GitHub Releases</a></p>
-                </div>
-            </section>
-        </main>
+    <div class="group-label">Security</div>
+    <a href="#auth">Authentication</a>
+    <a href="#audit">Session Audit</a>
+    <a href="#oplog">Operation Logs</a>
 
-        <footer class="rog-panel-header mt-8">
-            <div class="container mx-auto px-4 text-center text-gray-500">
-                <p>&copy; 2026 UniOps. Built with Go & React.</p>
-            </div>
-        </footer>
-    </div>
+    <div class="group-label">Reference</div>
+    <a href="#api">API Reference</a>
+    <a href="#env">Configuration</a>
+    <a href="#docker">Docker</a>
+  </nav>
+  <div class="sidebar-footer">
+    UniOps v1.0.1 &middot; Go 1.26
+  </div>
+</aside>
+
+<!-- Main content -->
+<div class="main">
+<div class="main-inner">
+
+<!-- Hero -->
+<div class="hero">
+  <h1><span>UniOps</span> Documentation</h1>
+  <p>Agent-First 统一服务器运维平台。通过 AI Agent 控制集群节点，实现 nginx 反向代理 + 后端服务的自动化部署与管理。</p>
+  <div class="hero-badges">
+    <span class="hero-badge">Go <b>1.26</b></span>
+    <span class="hero-badge">React <b>19</b></span>
+    <span class="hero-badge">SQLite <b>embedded</b></span>
+    <span class="hero-badge">SSH <b>proxy</b></span>
+    <span class="hero-badge">License <b>MIT</b></span>
+  </div>
+</div>
+
+<!-- Overview -->
+<h2 id="overview">Overview</h2>
+<p>UniOps 是一个面向中小团队的堡垒机 + 运维平台，核心理念是 <strong>Agent-First</strong>：所有运维操作都可以通过 AI Agent 对话完成，Agent 通过 SSH 执行命令、部署服务、管理配置。</p>
+
+<div class="card-grid">
+  <div class="card">
+    <h4>SSH Proxy</h4>
+    <p>Web Terminal 直连目标服务器，支持密码/密钥认证，自动密钥部署。</p>
+  </div>
+  <div class="card">
+    <h4>AI Agent</h4>
+    <p>支持 Claude / OpenAI / Custom(Ollama) 三种 Provider，对话式驱动部署。</p>
+  </div>
+  <div class="card">
+    <h4>Auto Deploy</h4>
+    <p>一键部署后端二进制 + Nginx 反向代理 + Systemd 服务管理。</p>
+  </div>
+  <div class="card">
+    <h4>Session Audit</h4>
+    <p>所有 Terminal 操作自动录制回放，操作日志按天分文件留痕。</p>
+  </div>
+  <div class="card">
+    <h4>File Manager</h4>
+    <p>通过 SFTP 浏览、上传、下载远程服务器文件。</p>
+  </div>
+  <div class="card">
+    <h4>Monitoring</h4>
+    <p>实时 CPU / 内存 / 磁盘 / 网络监控，5 秒自动刷新。</p>
+  </div>
+</div>
+
+<!-- Quick Start -->
+<h2 id="quickstart">Quick Start</h2>
+
+<h3>Docker (推荐)</h3>
+<pre><code>docker-compose up -d</code></pre>
+<p>访问 <code>http://localhost:6020</code>，默认账号 <code>root / root</code>。</p>
+
+<h3>从源码构建</h3>
+<pre><code># 前端
+cd web && npm ci && npm run build && cd ..
+
+# 后端
+CGO_ENABLED=0 go build -ldflags "-s -w -X main.version=dev" -o uniops ./cmd/uniops
+
+# 运行
+./uniops</code></pre>
+
+<h3>集群测试环境</h3>
+<p>启动 3 节点 SSH 集群模拟生产环境：</p>
+<pre><code>docker compose -f docker-compose.cluster.yml up -d --build
+
+# 节点: root / uniops123
+# node-1: localhost:2221
+# node-2: localhost:2222
+# node-3: localhost:2223</code></pre>
+
+<!-- Architecture -->
+<h2 id="architecture">Architecture</h2>
+<pre><code>┌─────────────┐     ┌─────────────────────┐     ┌──────────────┐
+│  Browser    │────▶│  UniOps Server      │────▶│  Target Host │
+│  (React SPA)│◀────│  :6020              │◀────│  (SSH)       │
+└─────────────┘     │                     │     └──────────────┘
+                    │  ┌───────────────┐  │
+                    │  │ AI Agent      │  │     ┌──────────────┐
+                    │  │ (Claude/GPT)  │  │────▶│  Cluster     │
+                    │  └───────────────┘  │     │  Nodes       │
+                    │  ┌───────────────┐  │     └──────────────┘
+                    │  │ SQLite + Logs │  │
+                    │  └───────────────┘  │
+                    └─────────────────────┘</code></pre>
+
+<p>前端编译产物通过 <code>go:embed</code> 嵌入 Go 二进制，发布时产出的是单个自包含可执行文件，无需额外静态文件目录。</p>
+
+<h3>技术栈</h3>
+<table>
+  <tr><th>层</th><th>技术</th><th>说明</th></tr>
+  <tr><td>Backend</td><td>Go 1.26 + Chi Router</td><td>纯 Go 实现，CGO_ENABLED=0 交叉编译</td></tr>
+  <tr><td>Frontend</td><td>React 19 + Vite + TypeScript</td><td>Tailwind CSS，嵌入二进制</td></tr>
+  <tr><td>Database</td><td>SQLite (modernc.org)</td><td>纯 Go 驱动，零外部依赖</td></tr>
+  <tr><td>Auth</td><td>JWT (HS256)</td><td>15min access + 7d refresh token</td></tr>
+  <tr><td>SSH</td><td>golang.org/x/crypto</td><td>密码/密钥双模式，PTY 终端</td></tr>
+  <tr><td>SFTP</td><td>pkg/sftp</td><td>文件管理</td></tr>
+  <tr><td>WebSocket</td><td>gorilla/websocket</td><td>Terminal + Deploy 实时日志</td></tr>
+</table>
+
+<!-- Server Management -->
+<h2 id="servers">Server Management</h2>
+<p>服务器是整个平台的核心资源。每个 Server 记录连接信息和认证凭据，支持密码和 SSH 密钥两种认证方式。</p>
+
+<h3>添加服务器</h3>
+<p>在 Servers 页面填写主机信息。如果使用密钥认证，需要先在 SSH Keys 中生成密钥对并部署到目标机器。</p>
+
+<h3>自动密钥部署</h3>
+<p>平台内置 RSA 密钥对生成器，一键将公钥部署到目标服务器的 <code>~/.ssh/authorized_keys</code>：</p>
+<pre><code>POST /api/sshkeys/generate     → 生成密钥对
+POST /api/sshkeys/deploy       → 通过密码部署公钥到目标</code></pre>
+
+<!-- Terminal -->
+<h2 id="terminal">Web Terminal</h2>
+<p>基于 xterm.js 的全功能 Web 终端，通过 WebSocket 桥接 SSH 会话。支持：</p>
+<ul style="margin: 8px 0 16px 20px; color: var(--text-dim);">
+  <li>PTY 终端模拟（xterm-256color）</li>
+  <li>终端窗口自适应缩放</li>
+  <li>全操作自动录制回放（Session Audit）</li>
+</ul>
+
+<!-- File Manager -->
+<h2 id="files">File Manager</h2>
+<p>通过 SFTP 协议浏览远程文件系统。支持目录导航、文件上传/下载/删除、创建目录。路径面包屑导航支持快速跳转。</p>
+
+<!-- Monitor -->
+<h2 id="monitor">Monitoring</h2>
+<p>实时采集目标服务器系统指标，5 秒自动刷新：</p>
+<div class="card-grid">
+  <div class="card"><h4>CPU</h4><p>使用率百分比，进度条可视化</p></div>
+  <div class="card"><h4>Memory</h4><p>已用/总量，使用率</p></div>
+  <div class="card"><h4>Disk</h4><p>各挂载点使用情况</p></div>
+  <div class="card"><h4>Network</h4><p>各网卡收发字节数</p></div>
+</div>
+
+<!-- Deployment -->
+<h2 id="deploy">Deployment</h2>
+<p>部署系统通过 SSH 在目标服务器上执行一系列命令，完成自动化部署。支持三种部署类型：</p>
+
+<table>
+  <tr><th>Type</th><th>说明</th><th>操作</th></tr>
+  <tr><td><code>backend</code></td><td>后端服务</td><td>下载二进制 → 创建 systemd unit → 启动服务</td></tr>
+  <tr><td><code>nginx</code></td><td>反向代理</td><td>安装 nginx → 写入 upstream 配置 → 启用站点</td></tr>
+  <tr><td><code>full</code></td><td>全量部署</td><td>backend + nginx 顺序执行</td></tr>
+</table>
+
+<h3>部署流程</h3>
+<pre><code>1. SSH 连接目标服务器
+2. mkdir -p /opt/{service_name}
+3. curl 下载二进制到 /opt/{service_name}/
+4. 创建 /etc/systemd/system/{service_name}.service
+5. systemctl daemon-reload && enable && restart
+6. 健康检查等待 (最多 30s)
+7. (nginx) 写入 upstream + server block → nginx -t → restart</code></pre>
+
+<h3>WebSocket 实时日志</h3>
+<p>部署过程中通过 WebSocket 推送实时日志，前端展示在 Deploy 页面的日志面板中：</p>
+<pre><code>ws://host:6020/api/deploy/{id}/ws</code></pre>
+
+<!-- Agent -->
+<h2 id="agent">AI Agent</h2>
+<p>AI Agent 是 UniOps 的核心差异化功能。Agent 通过 Tool Call 循环自动执行 SSH 命令和部署操作。</p>
+
+<h3>支持的 Provider</h3>
+<table>
+  <tr><th>Type</th><th>Endpoint</th><th>Model</th></tr>
+  <tr><td>Claude</td><td>api.anthropic.com</td><td>claude-3-5-sonnet</td></tr>
+  <tr><td>OpenAI</td><td>api.openai.com</td><td>gpt-4</td></tr>
+  <tr><td>Custom</td><td>自定义 (如 Ollama)</td><td>自定义</td></tr>
+</table>
+
+<h3>Agent Tool Calls</h3>
+<p>Agent 通过 <code>```tool</code> 代码块输出结构化指令，后端解析并执行后将结果回传 Agent，最多循环 5 轮：</p>
+<pre><code>```tool
+{"action":"exec","params":{"command":"systemctl status nginx"}}
+```
+
+```tool
+{"action":"deploy_full","params":{
+  "service_name":"myapp",
+  "binary_url":"https://github.com/.../releases/download/v1.0/myapp-linux-amd64",
+  "app_port":8080,
+  "domain":"myapp.example.com",
+  "nginx_port":80
+}}
+```</code></pre>
+
+<!-- Nginx -->
+<h2 id="nginx">Nginx Reverse Proxy</h2>
+<p>部署时自动生成的 Nginx 配置包含：</p>
+<pre><code>upstream {service_name}_backend {
+    server 127.0.0.1:{app_port};
+    keepalive 32;
+}
+
+server {
+    listen {nginx_port};
+    server_name {domain};
+
+    # WebSocket 支持
+    location /ws/ {
+        proxy_pass http://{service_name}_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 86400s;
+    }
+
+    # API + 静态资源
+    location / {
+        proxy_pass http://{service_name}_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}</code></pre>
+
+<!-- Auth -->
+<h2 id="auth">Authentication</h2>
+<p>基于 JWT 的认证系统。Access Token 15 分钟过期，Refresh Token 7 天过期。</p>
+<pre><code>POST /api/auth/login
+Body: {"username": "root", "password": "root"}
+Response: {"access_token": "eyJ...", "user": {...}}</code></pre>
+<p>所有受保护 API 需要 <code>Authorization: Bearer {token}</code> 请求头。</p>
+
+<!-- Audit -->
+<h2 id="audit">Session Audit</h2>
+<p>所有 SSH Terminal 操作自动录制。每条 Session 记录包含操作者、目标服务器、起止时间和完整回放数据（Base64 编码的 JSON）。</p>
+<p>在前端 Sessions 页面可以回放任意历史操作，按时间线逐步展示输入/输出。</p>
+
+<!-- Operation Logs -->
+<h2 id="oplog">Operation Logs</h2>
+<p>所有 API 操作自动记录到日志文件，<strong>按天分文件</strong>存储在 <code>logs/</code> 目录：</p>
+<pre><code>logs/
+├── 2026-07-01.jsonl
+├── 2026-07-02.jsonl
+└── ...</code></pre>
+<p>每条日志为 JSON Lines 格式：</p>
+<pre><code>{"timestamp":"...","user":"root","user_id":1,"action":"POST /api/deploy","method":"POST","path":"/api/deploy","status":201,"ip":"172.28.0.1:54321"}</code></pre>
+
+<h3>日志管理</h3>
+<table>
+  <tr><th>操作</th><th>说明</th></tr>
+  <tr><td>按天查看</td><td>选择日期标签，查看当天全部日志</td></tr>
+  <tr><td>搜索</td><td>按 user / action / keyword 过滤</td></tr>
+  <tr><td>范围清理</td><td>选择起止日期，批量删除日志文件</td></tr>
+</table>
+
+<!-- API Reference -->
+<h2 id="api">API Reference</h2>
+
+<h3>Auth</h3>
+<table>
+  <tr><th></th><th>Path</th><th>Description</th></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/auth/login</code></td><td>用户登录</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/auth/me</code></td><td>当前用户信息</td></tr>
+</table>
+
+<h3>Servers</h3>
+<table>
+  <tr><th></th><th>Path</th><th>Description</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/servers</code></td><td>服务器列表</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/servers</code></td><td>创建服务器</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/servers/{id}</code></td><td>服务器详情</td></tr>
+  <tr><td><span class="badge badge-put">PUT</span></td><td><code>/api/servers/{id}</code></td><td>更新服务器</td></tr>
+  <tr><td><span class="badge badge-delete">DEL</span></td><td><code>/api/servers/{id}</code></td><td>删除服务器</td></tr>
+</table>
+
+<h3>Deployment</h3>
+<table>
+  <tr><th></th><th>Path</th><th>Description</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/deploy</code></td><td>全部部署记录</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/deploy</code></td><td>触发部署</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/deploy/server/{serverId}</code></td><td>某服务器的部署记录</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/deploy/{id}</code></td><td>部署详情</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/deploy/{id}/ws</code></td><td>WebSocket 实时日志</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/deploy/exec</code></td><td>远程执行命令</td></tr>
+</table>
+
+<h3>Agent</h3>
+<table>
+  <tr><th></th><th>Path</th><th>Description</th></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/agent/chat</code></td><td>Agent 对话 (含 tool call 循环)</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/agents</code></td><td>Agent 列表</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/agents</code></td><td>创建 Agent</td></tr>
+</table>
+
+<h3>Operation Logs</h3>
+<table>
+  <tr><th></th><th>Path</th><th>Description</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/oplog/dates</code></td><td>可用日期列表</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/oplog/read?date=YYYY-MM-DD</code></td><td>读取某天的日志</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/oplog/search?user=&amp;action=&amp;keyword=</code></td><td>搜索日志</td></tr>
+  <tr><td><span class="badge badge-delete">DEL</span></td><td><code>/api/oplog</code></td><td>范围清理 (body: start_date, end_date)</td></tr>
+</table>
+
+<h3>Other</h3>
+<table>
+  <tr><th></th><th>Path</th><th>Description</th></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/health</code></td><td>健康检查</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/monitor/{serverId}</code></td><td>服务器监控指标</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/ws/terminal/{serverId}</code></td><td>Terminal WebSocket</td></tr>
+  <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/files/{serverId}/list</code></td><td>文件列表</td></tr>
+  <tr><td><span class="badge badge-get">GET</span></td><td><code>/api/audit/sessions</code></td><td>审计会话列表</td></tr>
+</table>
+
+<!-- Configuration -->
+<h2 id="env">Configuration</h2>
+
+<table>
+  <tr><th>环境变量</th><th>默认值</th><th>说明</th></tr>
+  <tr><td><code>DB_PATH</code></td><td><code>uniops.db</code></td><td>SQLite 数据库路径</td></tr>
+  <tr><td><code>JWT_SECRET</code></td><td><code>default-secret-...</code></td><td>JWT 签名密钥</td></tr>
+  <tr><td><code>PORT</code></td><td><code>6020</code></td><td>HTTP 监听端口 (代码硬编码)</td></tr>
+</table>
+
+<h3>构建参数</h3>
+<pre><code>go build -ldflags "-s -w -X main.version=v1.0.1" -o uniops ./cmd/uniops</code></pre>
+
+<!-- Docker -->
+<h2 id="docker">Docker</h2>
+
+<h3>生产部署</h3>
+<pre><code># docker-compose.yml
+services:
+  uniops:
+    build: .
+    ports:
+      - "6020:6020"
+    environment:
+      - JWT_SECRET=your-production-secret
+      - DB_PATH=/root/data/uniops.db
+    volumes:
+      - ./data:/root/data
+    restart: unless-stopped</code></pre>
+
+<h3>集群测试</h3>
+<pre><code># docker-compose.cluster.yml
+# 3 个 SSH 节点 + UniOps 主控
+# node-1/2/3: ubuntu:24.04 + openssh-server
+# root / uniops123
+# SSH ports: 2221, 2222, 2223
+# 内部网络: 172.28.0.0/16</code></pre>
+
+<h3>Dockerfile (多阶段构建)</h3>
+<pre><code>FROM golang:1.26-alpine AS builder
+# ... go build
+
+FROM node:22-alpine AS frontend-builder
+# ... npm run build
+
+FROM alpine:latest
+# ... 复制二进制 + web/dist
+EXPOSE 6020
+CMD ["./uniops"]</code></pre>
+
+</div>
+</div>
+
+<script>
+// Sidebar active state on scroll
+const links = document.querySelectorAll('.sidebar nav a');
+const sections = [...links].map(a => document.querySelector(a.getAttribute('href')));
+
+function updateActive() {
+  let current = 0;
+  sections.forEach((s, i) => {
+    if (s && s.getBoundingClientRect().top <= 100) current = i;
+  });
+  links.forEach(a => a.classList.remove('active'));
+  if (links[current]) links[current].classList.add('active');
+}
+window.addEventListener('scroll', updateActive);
+updateActive();
+</script>
+
 </body>
 </html>
